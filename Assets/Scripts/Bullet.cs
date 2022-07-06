@@ -9,8 +9,8 @@ public class Bullet : MonoBehaviour
     private float speed;
     public void Shoot(float bulletSpeed,float fuse)
     {
-        rb.AddRelativeForce(Vector2.up*bulletSpeed);
-        StartCoroutine(TimeToExplosion(fuse * FORCE_TO_SPEED_RATIO));
+        rb.AddRelativeForce(Vector2.up*bulletSpeed * FORCE_TO_SPEED_RATIO);
+        StartCoroutine(TimeToExplosion(fuse ));
     }
 
     private void Update()

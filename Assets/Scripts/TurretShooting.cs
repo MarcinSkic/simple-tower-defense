@@ -23,28 +23,20 @@ public class TurretShooting : MonoBehaviour
     [SerializeField] private Transform _dynamic;
 
     [Header("temp")]
-    [SerializeField] private Transform currentTarget;
-
     [SerializeField] private TextMeshProUGUI distanceMeter;
     [SerializeField] private TextMeshProUGUI rotationMeter;
 
-
+    private Transform currentTarget;
     private float secondsSinceLastShot;
 
     private const float SECONDS_IN_MINUTE = 60;
 
+    
     void Update()
     {
         if (currentTarget == null)
         {
-            if(planeDetector.planes.Count != 0)
-            {
-                currentTarget = planeDetector.planes[0].transform;
-            } 
-            else
-            {
-                return;
-            }
+            FindTarget();
         }
 
         var targetDistance = GetDistanceFromTarget();
@@ -56,6 +48,18 @@ public class TurretShooting : MonoBehaviour
         if (CanShoot(aimInaccuracy))
         {
             Shoot(targetDistance);
+        }
+    }
+
+    private void FindTarget()
+    {
+        if (planeDetector.planes.Count != 0)
+        {
+            currentTarget = planeDetector.planes[0].transform;
+        }
+        else
+        {
+            return;
         }
     }
 
@@ -90,9 +94,12 @@ public class TurretShooting : MonoBehaviour
     private void Shoot(float targetDistance)
     {
         secondsSinceLastShot = 0;
-        Quaternion changedRotation = new Quaternion();
-        changedRotation.eulerAngles = transform.rotation.eulerAngles + Vector3.forward * Random.Range(-bulletAngleBias, bulletAngleBias);
-        var obj = Instantiate(bullet, transform.position,changedRotation , _dynamic);
-        obj.Shoot(bulletSpeed, (targetDistance / bulletSpeed)*Random.Range(1f-bulletFuseBias/2f,1f+bulletFuseBias));
+        Quaternion biasedRotation = new Quaternion();
+        biasedRotation.eulerAngles = transform.rotation.eulerAngles + Vector3.forward * Random.Range(-bulletAngleBias, bulletAngleBias);
+
+        var distanceToSpawnFromCannon = transform.up.normalized * 0.1f;
+        var obj = Instantiate(bullet, transform.position + distanceToSpawnFromCannon , biasedRotation , _dynamic);
+        var biasedFuse = (targetDistance / bulletSpeed) * Random.Range(1f - bulletFuseBias / 2f, 1f + bulletFuseBias);
+        obj.Shoot(bulletSpeed, biasedFuse);
     }
 }

@@ -4,17 +4,28 @@ using UnityEngine;
 
 public class PlaneController : MonoBehaviour
 {
+
+
     [SerializeField] private float speed;
     [SerializeField] private float health;
+    [SerializeField] private float maxHealth;
 
-    void Start()
+    [SerializeField] private HealthSlider healthSlider;
+
+    private void Start()
     {
-        
+        health = maxHealth;
+        healthSlider.Init(maxHealth, maxHealth);
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.Translate(new Vector2(0, 1) * speed * Time.deltaTime);
+    }
+
+    public void DealDamage(float damage)
+    {
+        health -= damage;
+        healthSlider.ChangeValue(health);
     }
 }

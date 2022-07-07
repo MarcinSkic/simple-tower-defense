@@ -36,7 +36,10 @@ public class TurretShooting : MonoBehaviour
     {
         if (currentTarget == null)
         {
-            FindTarget();
+            if (!FindTarget())
+            {
+                return;
+            }
         }
 
         var targetDistance = GetDistanceFromTarget();
@@ -51,15 +54,16 @@ public class TurretShooting : MonoBehaviour
         }
     }
 
-    private void FindTarget()
+    private bool FindTarget()
     {
         if (planeDetector.planes.Count != 0)
         {
             currentTarget = planeDetector.planes[0].transform;
+            return true;
         }
         else
         {
-            return;
+            return false;
         }
     }
 
